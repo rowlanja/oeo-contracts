@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.13+commit.abaa5c0e"
+		"version": "0.8.7+commit.e28d00a7"
 	},
 	"language": "Solidity",
 	"output": {
@@ -8,91 +8,476 @@
 			{
 				"inputs": [
 					{
-						"internalType": "contract VotingToken",
+						"internalType": "contract IVotes",
 						"name": "_token",
 						"type": "address"
+					},
+					{
+						"internalType": "contract TimelockController",
+						"name": "_timelock",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "initialVotingDelay",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "initialVotingPeriod",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "initialProposalThreshold",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "initialQuorumFraction",
+						"type": "uint256"
 					}
 				],
 				"stateMutability": "nonpayable",
 				"type": "constructor"
 			},
 			{
+				"anonymous": false,
 				"inputs": [
 					{
+						"indexed": false,
 						"internalType": "uint256",
-						"name": "_proposalId",
+						"name": "proposalId",
 						"type": "uint256"
 					}
 				],
-				"name": "completeProposalVoting",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
+				"name": "ProposalCanceled",
+				"type": "event"
 			},
 			{
+				"anonymous": false,
 				"inputs": [
 					{
-						"internalType": "string",
-						"name": "_name",
-						"type": "string"
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
 					},
 					{
-						"internalType": "string",
-						"name": "_description",
-						"type": "string"
-					},
-					{
-						"internalType": "uint256",
-						"name": "_votingWeakPeriod",
-						"type": "uint256"
-					}
-				],
-				"name": "createProposal",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "_proposalId",
-						"type": "uint256"
-					}
-				],
-				"name": "execution",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
+						"indexed": false,
 						"internalType": "address",
-						"name": "",
+						"name": "proposer",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address[]",
+						"name": "targets",
+						"type": "address[]"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256[]",
+						"name": "values",
+						"type": "uint256[]"
+					},
+					{
+						"indexed": false,
+						"internalType": "string[]",
+						"name": "signatures",
+						"type": "string[]"
+					},
+					{
+						"indexed": false,
+						"internalType": "bytes[]",
+						"name": "calldatas",
+						"type": "bytes[]"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "startBlock",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "endBlock",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
+					}
+				],
+				"name": "ProposalCreated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
+					}
+				],
+				"name": "ProposalExecuted",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "eta",
+						"type": "uint256"
+					}
+				],
+				"name": "ProposalQueued",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "oldProposalThreshold",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "newProposalThreshold",
+						"type": "uint256"
+					}
+				],
+				"name": "ProposalThresholdSet",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "oldQuorumNumerator",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "newQuorumNumerator",
+						"type": "uint256"
+					}
+				],
+				"name": "QuorumNumeratorUpdated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "oldTimelock",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "newTimelock",
 						"type": "address"
 					}
 				],
-				"name": "proposalOwner",
+				"name": "TimelockChange",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "voter",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint8",
+						"name": "support",
+						"type": "uint8"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "weight",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "reason",
+						"type": "string"
+					}
+				],
+				"name": "VoteCast",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "oldVotingDelay",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "newVotingDelay",
+						"type": "uint256"
+					}
+				],
+				"name": "VotingDelaySet",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "oldVotingPeriod",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "newVotingPeriod",
+						"type": "uint256"
+					}
+				],
+				"name": "VotingPeriodSet",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "BALLOT_TYPEHASH",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "COUNTING_MODE",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint8",
+						"name": "support",
+						"type": "uint8"
+					}
+				],
+				"name": "castVote",
 				"outputs": [
 					{
 						"internalType": "uint256",
-						"name": "id",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "proposalId",
 						"type": "uint256"
 					},
 					{
-						"internalType": "string",
-						"name": "name",
-						"type": "string"
+						"internalType": "uint8",
+						"name": "support",
+						"type": "uint8"
 					},
 					{
+						"internalType": "uint8",
+						"name": "v",
+						"type": "uint8"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "r",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "s",
+						"type": "bytes32"
+					}
+				],
+				"name": "castVoteBySig",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint8",
+						"name": "support",
+						"type": "uint8"
+					},
+					{
+						"internalType": "string",
+						"name": "reason",
+						"type": "string"
+					}
+				],
+				"name": "castVoteWithReason",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address[]",
+						"name": "targets",
+						"type": "address[]"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "values",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "bytes[]",
+						"name": "calldatas",
+						"type": "bytes[]"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "descriptionHash",
+						"type": "bytes32"
+					}
+				],
+				"name": "execute",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
 						"internalType": "address",
-						"name": "owner",
+						"name": "account",
 						"type": "address"
 					},
 					{
+						"internalType": "uint256",
+						"name": "blockNumber",
+						"type": "uint256"
+					}
+				],
+				"name": "getVotes",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "hasVoted",
+				"outputs": [
+					{
 						"internalType": "bool",
-						"name": "isComplete",
+						"name": "",
 						"type": "bool"
 					}
 				],
@@ -102,12 +487,40 @@
 			{
 				"inputs": [
 					{
+						"internalType": "address[]",
+						"name": "targets",
+						"type": "address[]"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "values",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "bytes[]",
+						"name": "calldatas",
+						"type": "bytes[]"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "descriptionHash",
+						"type": "bytes32"
+					}
+				],
+				"name": "hashProposal",
+				"outputs": [
+					{
 						"internalType": "uint256",
-						"name": "_proposalId",
+						"name": "",
 						"type": "uint256"
 					}
 				],
-				"name": "proposalResult",
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "name",
 				"outputs": [
 					{
 						"internalType": "string",
@@ -122,66 +535,335 @@
 				"inputs": [
 					{
 						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
+					}
+				],
+				"name": "proposalDeadline",
+				"outputs": [
+					{
+						"internalType": "uint256",
 						"name": "",
 						"type": "uint256"
 					}
 				],
-				"name": "proposals",
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
+					}
+				],
+				"name": "proposalEta",
 				"outputs": [
 					{
 						"internalType": "uint256",
-						"name": "id",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
+					}
+				],
+				"name": "proposalSnapshot",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "proposalThreshold",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
+					}
+				],
+				"name": "proposalVotes",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "againstVotes",
 						"type": "uint256"
 					},
 					{
-						"internalType": "string",
-						"name": "name",
-						"type": "string"
+						"internalType": "uint256",
+						"name": "forVotes",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "abstainVotes",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address[]",
+						"name": "targets",
+						"type": "address[]"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "values",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "bytes[]",
+						"name": "calldatas",
+						"type": "bytes[]"
 					},
 					{
 						"internalType": "string",
 						"name": "description",
 						"type": "string"
-					},
+					}
+				],
+				"name": "propose",
+				"outputs": [
 					{
 						"internalType": "uint256",
-						"name": "votedYes",
+						"name": "",
 						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address[]",
+						"name": "targets",
+						"type": "address[]"
 					},
 					{
-						"internalType": "uint256",
-						"name": "votedNo",
-						"type": "uint256"
+						"internalType": "uint256[]",
+						"name": "values",
+						"type": "uint256[]"
 					},
 					{
-						"internalType": "uint256",
-						"name": "votingPeriod",
-						"type": "uint256"
+						"internalType": "bytes[]",
+						"name": "calldatas",
+						"type": "bytes[]"
 					},
+					{
+						"internalType": "bytes32",
+						"name": "descriptionHash",
+						"type": "bytes32"
+					}
+				],
+				"name": "queue",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "blockNumber",
+						"type": "uint256"
+					}
+				],
+				"name": "quorum",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "quorumDenominator",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "quorumNumerator",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
 					{
 						"internalType": "address",
-						"name": "owner",
+						"name": "target",
 						"type": "address"
 					},
 					{
 						"internalType": "uint256",
-						"name": "voteCount",
+						"name": "value",
 						"type": "uint256"
 					},
+					{
+						"internalType": "bytes",
+						"name": "data",
+						"type": "bytes"
+					}
+				],
+				"name": "relay",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
 					{
 						"internalType": "uint256",
-						"name": "completedOn",
+						"name": "newProposalThreshold",
 						"type": "uint256"
-					},
+					}
+				],
+				"name": "setProposalThreshold",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "newVotingDelay",
+						"type": "uint256"
+					}
+				],
+				"name": "setVotingDelay",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "newVotingPeriod",
+						"type": "uint256"
+					}
+				],
+				"name": "setVotingPeriod",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
+					}
+				],
+				"name": "state",
+				"outputs": [
+					{
+						"internalType": "enum IGovernor.ProposalState",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes4",
+						"name": "interfaceId",
+						"type": "bytes4"
+					}
+				],
+				"name": "supportsInterface",
+				"outputs": [
 					{
 						"internalType": "bool",
-						"name": "isComplete",
+						"name": "",
 						"type": "bool"
-					},
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "timelock",
+				"outputs": [
 					{
-						"internalType": "bool",
-						"name": "isExecuted",
-						"type": "bool"
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "token",
+				"outputs": [
+					{
+						"internalType": "contract IVotes",
+						"name": "",
+						"type": "address"
 					}
 				],
 				"stateMutability": "view",
@@ -191,11 +873,11 @@
 				"inputs": [
 					{
 						"internalType": "uint256",
-						"name": "_proposalId",
+						"name": "newQuorumNumerator",
 						"type": "uint256"
 					}
 				],
-				"name": "removeProposal",
+				"name": "updateQuorumNumerator",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -203,25 +885,133 @@
 			{
 				"inputs": [
 					{
-						"internalType": "uint256",
-						"name": "_proposalId",
-						"type": "uint256"
-					},
-					{
-						"internalType": "enum Governance.VotedFor",
-						"name": "_voteFor",
-						"type": "uint8"
+						"internalType": "contract TimelockController",
+						"name": "newTimelock",
+						"type": "address"
 					}
 				],
-				"name": "voteForProposal",
+				"name": "updateTimelock",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "version",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "votingDelay",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "votingPeriod",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"stateMutability": "payable",
+				"type": "receive"
 			}
 		],
 		"devdoc": {
 			"kind": "dev",
-			"methods": {},
+			"methods": {
+				"COUNTING_MODE()": {
+					"details": "See {IGovernor-COUNTING_MODE}."
+				},
+				"castVote(uint256,uint8)": {
+					"details": "See {IGovernor-castVote}."
+				},
+				"castVoteBySig(uint256,uint8,uint8,bytes32,bytes32)": {
+					"details": "See {IGovernor-castVoteBySig}."
+				},
+				"castVoteWithReason(uint256,uint8,string)": {
+					"details": "See {IGovernor-castVoteWithReason}."
+				},
+				"execute(address[],uint256[],bytes[],bytes32)": {
+					"details": "See {IGovernor-execute}."
+				},
+				"hasVoted(uint256,address)": {
+					"details": "See {IGovernor-hasVoted}."
+				},
+				"hashProposal(address[],uint256[],bytes[],bytes32)": {
+					"details": "See {IGovernor-hashProposal}. The proposal id is produced by hashing the RLC encoded `targets` array, the `values` array, the `calldatas` array and the descriptionHash (bytes32 which itself is the keccak256 hash of the description string). This proposal id can be produced from the proposal data which is part of the {ProposalCreated} event. It can even be computed in advance, before the proposal is submitted. Note that the chainId and the governor address are not part of the proposal id computation. Consequently, the same proposal (with same operation and same description) will have the same id if submitted on multiple governors accross multiple networks. This also means that in order to execute the same operation twice (on the same governor) the proposer will have to change the description in order to avoid proposal id conflicts."
+				},
+				"name()": {
+					"details": "See {IGovernor-name}."
+				},
+				"proposalDeadline(uint256)": {
+					"details": "See {IGovernor-proposalDeadline}."
+				},
+				"proposalEta(uint256)": {
+					"details": "Public accessor to check the eta of a queued proposal"
+				},
+				"proposalSnapshot(uint256)": {
+					"details": "See {IGovernor-proposalSnapshot}."
+				},
+				"proposalVotes(uint256)": {
+					"details": "Accessor to the internal vote counts."
+				},
+				"queue(address[],uint256[],bytes[],bytes32)": {
+					"details": "Function to queue a proposal to the timelock."
+				},
+				"quorumDenominator()": {
+					"details": "Returns the quorum denominator. Defaults to 100, but may be overridden."
+				},
+				"quorumNumerator()": {
+					"details": "Returns the current quorum numerator. See {quorumDenominator}."
+				},
+				"relay(address,uint256,bytes)": {
+					"details": "Relays a transaction or function call to an arbitrary target. In cases where the governance executor is some contract other than the governor itself, like when using a timelock, this function can be invoked in a governance proposal to recover tokens or Ether that was sent to the governor contract by mistake. Note that if the executor is simply the governor itself, use of `relay` is redundant."
+				},
+				"setProposalThreshold(uint256)": {
+					"details": "Update the proposal threshold. This operation can only be performed through a governance proposal. Emits a {ProposalThresholdSet} event."
+				},
+				"setVotingDelay(uint256)": {
+					"details": "Update the voting delay. This operation can only be performed through a governance proposal. Emits a {VotingDelaySet} event."
+				},
+				"setVotingPeriod(uint256)": {
+					"details": "Update the voting period. This operation can only be performed through a governance proposal. Emits a {VotingPeriodSet} event."
+				},
+				"timelock()": {
+					"details": "Public accessor to check the address of the timelock"
+				},
+				"updateQuorumNumerator(uint256)": {
+					"details": "Changes the quorum numerator. Emits a {QuorumNumeratorUpdated} event. Requirements: - Must be called through a governance proposal. - New numerator must be smaller or equal to the denominator."
+				},
+				"updateTimelock(address)": {
+					"details": "Public endpoint to update the underlying timelock instance. Restricted to the timelock itself, so updates must be proposed, scheduled, and executed through governance proposals. CAUTION: It is not recommended to change the timelock while there are other queued governance proposals."
+				},
+				"version()": {
+					"details": "See {IGovernor-version}."
+				}
+			},
 			"version": 1
 		},
 		"userdoc": {
@@ -246,28 +1036,108 @@
 		"remappings": []
 	},
 	"sources": {
-		"@openzeppelin/contracts/token/ERC20/ERC20.sol": {
-			"keccak256": "0xdadd41acb749920eccf40aeaa8d291adf9751399a7343561bad13e7a8d99be0b",
+		"@openzeppelin/contracts/access/AccessControl.sol": {
+			"keccak256": "0x4a1a0ba12bf1a33f10d9fe226278cf59675c0b929d29e4da99658a079b27fb84",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://12af4ac016f9fdf3be5d15824f4292272aa11f6b2e0192a0f7320f5ad49bbbf0",
-				"dweb:/ipfs/QmRXMpdqCgA3TYuYxBodqs5p9jGbnMW6xa2gvjppvq4TWk"
+				"bzz-raw://bda1319db846d6d6f92d8a57a9bdee8bde1dc39aa7546165791692c24dd6f30a",
+				"dweb:/ipfs/Qma5oZ7DmbdAjd8mpiW7mx896PDtwsQtCQ2hj9Upf7b7JK"
 			]
 		},
-		"@openzeppelin/contracts/token/ERC20/IERC20.sol": {
-			"keccak256": "0xbbc8ac883ac3c0078ce5ad3e288fbb3ffcc8a30c3a98c0fda0114d64fc44fca2",
+		"@openzeppelin/contracts/access/IAccessControl.sol": {
+			"keccak256": "0x59ce320a585d7e1f163cd70390a0ef2ff9cec832e2aa544293a00692465a7a57",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://87a7a5d2f6f63f84598af02b8c50ca2df2631cb8ba2453e8d95fcb17e4be9824",
-				"dweb:/ipfs/QmR76hqtAcRqoFj33tmNjcWTLrgNsAaakYwnKZ8zoJtKei"
+				"bzz-raw://bb2c137c343ef0c4c7ce7b18c1d108afdc9d315a04e48307288d2d05adcbde3a",
+				"dweb:/ipfs/QmUxhrAQM3MM3FF5j7AtcXLXguWCJBHJ14BRdVtuoQc8Fh"
 			]
 		},
-		"@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
-			"keccak256": "0x8de418a5503946cabe331f35fe242d3201a73f67f77aaeb7110acb1f30423aca",
+		"@openzeppelin/contracts/governance/Governor.sol": {
+			"keccak256": "0xfaf7663a441cf4161aeceda4907949d537d409b4348e6b242b2a74b4a2d56ce2",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://5a376d3dda2cb70536c0a45c208b29b34ac560c4cb4f513a42079f96ba47d2dd",
-				"dweb:/ipfs/QmZQg6gn1sUpM8wHzwNvSnihumUCAhxD119MpXeKp8B9s8"
+				"bzz-raw://8f8449e1799d6f469b7512fd004add19cf06aeca4ca56209b210eadbdd45b4ec",
+				"dweb:/ipfs/QmbCrDbU15EbfwPVKBwMDqMouPLE4o7eofFCzTg3MLRsLz"
+			]
+		},
+		"@openzeppelin/contracts/governance/IGovernor.sol": {
+			"keccak256": "0x4a3702e2556bc04120a353119d50cb5edbc6f5c9c5504b04e598b9195b0e5471",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://4b635d424a6bfb9a7b0c41dd1bef569cbc35784746900dc59f96a93f4e5aec07",
+				"dweb:/ipfs/QmZikwbT5GzxHA71ExAEnsRC2DHKDg1hdoRLkjJ1XndDM8"
+			]
+		},
+		"@openzeppelin/contracts/governance/TimelockController.sol": {
+			"keccak256": "0x61357e3fe6a0a93c779bc75f730d219458b268ffd19c0c0a6f31c7eb0f435466",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://510ed36606d4602eb167a9c66c3ccfcc863061ed64c7cd778729cd866b02e88e",
+				"dweb:/ipfs/QmTCu2EYrP5jRhwK7zSdGyezANdb1xfP55zyLnfe8MAYCL"
+			]
+		},
+		"@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol": {
+			"keccak256": "0x42fdf674e422c97ee262f0dd1e636de1ee6c1556e61e38b167217e49381eff1f",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://76957235677148cdffbc89353c238d3dbc3f3a978bd2b35104a85a4289ba9383",
+				"dweb:/ipfs/QmYH2J9zp6GsKsV2QTpi7CJLyWkGxMwBYf718CnudFBRmA"
+			]
+		},
+		"@openzeppelin/contracts/governance/extensions/GovernorSettings.sol": {
+			"keccak256": "0xab3781f09dfb447d0c2f5bbb2aafc9ff86333f16c61580ab85d7c8a87491eab9",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://58571bc89cd0e54fa9af6b41e53e2110c6f5767eb691af8ad88759dbde07b3fd",
+				"dweb:/ipfs/QmbeoatuYT5ukpGLWZh4DHb7yrC3TpBbm9hDdWwkdUuUy4"
+			]
+		},
+		"@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol": {
+			"keccak256": "0x027e928dff85e88a4c24d5530f61fd6db43052e1430f3f3c7469b6d54ed87f87",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://60ddacd61e801ca58ffb97dfe82af44c92b09148f936254405e2721e8b8c2070",
+				"dweb:/ipfs/QmPHkpauTUa8UrPYCjFwKYiar1AzT2tmX7T1XjczwdcD33"
+			]
+		},
+		"@openzeppelin/contracts/governance/extensions/GovernorVotes.sol": {
+			"keccak256": "0x8f181616d38bc85021c06f1b3acce5ee05339864416b2d328948fb46a378c77f",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://e67f3acc42fc19f8c7ed2f56c3d881bfa771b1ce2854e1100a086dc0b6cb5b30",
+				"dweb:/ipfs/QmPAd8sy6t5Ck3wC7WyzECbVGYPfV6WNius4UoH2rzc7yp"
+			]
+		},
+		"@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol": {
+			"keccak256": "0xc3dee116eda4152b8e6ff4b51cc9cce35bc9ce27b1ea91e95f7f381315bcb78d",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://b42a49c70f50b2fc56a2fe58ee9e9a4b0d4250223e3b3001d5c047fa9293f65b",
+				"dweb:/ipfs/QmdadAsLSAYFingn2khRfh5NFUvmETRTyig9Fh3i4skrPY"
+			]
+		},
+		"@openzeppelin/contracts/governance/extensions/IGovernorTimelock.sol": {
+			"keccak256": "0xe6234ac4ba0508a3371a46543cdf4bf3a1a404d2d3c3470006741a0da294f974",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://f65e0806425afa3946ba400879444d73b0b9320534eaecb2c64dc3689cff0614",
+				"dweb:/ipfs/QmbpjBrErEMrx9qbS529XXbfooHfkihCj9iBz2QWiw4Xe4"
+			]
+		},
+		"@openzeppelin/contracts/governance/utils/IVotes.sol": {
+			"keccak256": "0xf5324a55ee9c0b4a840ea57c055ac9d046f88986ceef567e1cf68113e46a79c0",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://f41fe2bddc33c17ccccfc25379b1869354e9ee62d8b28d2acc95229eeba37a86",
+				"dweb:/ipfs/Qmb6SF2XL2uSvH6k5JSjtx4Xoqz41ACkhdAhtbW1Yh3RiY"
+			]
+		},
+		"@openzeppelin/contracts/utils/Address.sol": {
+			"keccak256": "0x2ccf9d2313a313d41a791505f2b5abfdc62191b5d4334f7f7a82691c088a1c87",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://b3a57d0854b2fdce6ebff933a48dca2445643d1eccfc27f00292e937f26c6a58",
+				"dweb:/ipfs/QmW45rZooS9TqR4YXUbjRbtf2Bpb5ouSarBvfW1LdGprvV"
 			]
 		},
 		"@openzeppelin/contracts/utils/Context.sol": {
@@ -278,26 +1148,68 @@
 				"dweb:/ipfs/QmRK2Y5Yc6BK7tGKkgsgn3aJEQGi5aakeSPZvS65PV8Xp3"
 			]
 		},
-		"contracts/Controller_OeoDao.sol": {
-			"keccak256": "0xe4411f6941bd86684f65accc93f21887c4a0e60127a448648ad92a5cd71047ae",
+		"@openzeppelin/contracts/utils/Strings.sol": {
+			"keccak256": "0x32c202bd28995dd20c4347b7c6467a6d3241c74c8ad3edcbb610cd9205916c45",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://b679462c1d00b059c196bdd4955d23c52223e1be88957761e39363df1dd0bb68",
-				"dweb:/ipfs/QmcB67R7q7kjMUunffFWrGCL5asov8QtANcupz2THf4fgw"
+				"bzz-raw://8179c356adb19e70d6b31a1eedc8c5c7f0c00e669e2540f4099e3844c6074d30",
+				"dweb:/ipfs/QmWFbivarEobbqhS1go64ootVuHfVohBseerYy9FTEd1W2"
+			]
+		},
+		"@openzeppelin/contracts/utils/Timers.sol": {
+			"keccak256": "0x29791a62950a7983e02a673639c1a781d1e448691800456c2ce4b99715391b14",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://38f37b3c682657d4b1790b5e564d4c9445856c93aa79ffed43fd076959118118",
+				"dweb:/ipfs/QmcBGSacnV1JDz7kicsFijDYBxx5CmLSjUSJVLqyn7zH3G"
+			]
+		},
+		"@openzeppelin/contracts/utils/cryptography/ECDSA.sol": {
+			"keccak256": "0x3c07f43e60e099b3b157243b3152722e73b80eeb7985c2cd73712828d7f7da29",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://466ffb5a6e3bd65fffd996f9287ffd240ea21588a338c6efe143d94eaed014a7",
+				"dweb:/ipfs/Qmans3vvPJZcvxe9KLAPc9Xwe4TFVTJdzaQGpi62Vrhoe2"
+			]
+		},
+		"@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol": {
+			"keccak256": "0x6688fad58b9ec0286d40fa957152e575d5d8bd4c3aa80985efdb11b44f776ae7",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://8bc00ab7f133cdaafd212a5cc6a16c8d37319721105d130c8e5af0c4e8f170ba",
+				"dweb:/ipfs/QmVmf6LVMfFiEkvKYLzSv3bGHzymEW93AcUuFrNUdY3NtT"
+			]
+		},
+		"@openzeppelin/contracts/utils/introspection/ERC165.sol": {
+			"keccak256": "0xd10975de010d89fd1c78dc5e8a9a7e7f496198085c151648f20cba166b32582b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://fb0048dee081f6fffa5f74afc3fb328483c2a30504e94a0ddd2a5114d731ec4d",
+				"dweb:/ipfs/QmZptt1nmYoA5SgjwnSgWqgUSDgm4q52Yos3xhnMv3MV43"
+			]
+		},
+		"@openzeppelin/contracts/utils/introspection/IERC165.sol": {
+			"keccak256": "0x447a5f3ddc18419d41ff92b3773fb86471b1db25773e07f877f548918a185bf1",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://be161e54f24e5c6fae81a12db1a8ae87bc5ae1b0ddc805d82a1440a68455088f",
+				"dweb:/ipfs/QmP7C3CHdY9urF4dEMb9wmsp1wMxHF6nhA2yQE5SKiPAdy"
+			]
+		},
+		"@openzeppelin/contracts/utils/math/SafeCast.sol": {
+			"keccak256": "0x5c6caab697d302ad7eb59c234a4d2dbc965c1bae87709bd2850060b7695b28c7",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://fb62abcee612c175f1b9bc70e5dfe5bd23473c99987ade6e80e291f68dc60ff1",
+				"dweb:/ipfs/QmZCMajhG7FtRYNDwBchXN89mXR6HLPVzr9732qfUdNf9E"
 			]
 		},
 		"contracts/Governance_OeoDao.sol": {
-			"keccak256": "0xb11b62bae1a8ad039ff6dbcc98d2611677ef2664d9a59a1e4ad626c10d5616ba",
+			"keccak256": "0x4e0cc35a1daa82c6fcead1b4cf63a6c997dc71fcc5cae2099b85f9414736e62b",
+			"license": "MIT",
 			"urls": [
-				"bzz-raw://39294ec828cb6e224597b2d9cd26ea35acb70fc4070ec9e4e30f5250478d2fbc",
-				"dweb:/ipfs/QmTU592PgNmkcN7ep2KW2twX68sh67PXHx7kaGb6pihdNz"
-			]
-		},
-		"contracts/VotingToken_OeoDao.sol": {
-			"keccak256": "0x809c0b84555f03698d05c91e7e311e5c7f2db1a42c6f9e6c28fb144ef0813752",
-			"urls": [
-				"bzz-raw://df6fb44bf6de6ef53ee86ff73113ab57891df2599168340fc9d98f1d0611851e",
-				"dweb:/ipfs/QmVXR6gBNZ1ckMPN2xnMi3dqHfp1oJtXuGnaHeDcNM4SyF"
+				"bzz-raw://59e2a69caaa3a03f2f073a3a66686f02d3665bcf000a9b8b371293bb6b0d2464",
+				"dweb:/ipfs/Qmafmg4sw7ZwNDzNdWpkxTPukVQh1cSwRB4peS2L4MZF22"
 			]
 		}
 	},
