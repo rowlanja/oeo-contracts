@@ -129,9 +129,9 @@
 				"constructor": {
 					"details": "The rate is the conversion between wei and the smallest and indivisible token unit. So, if you are using a rate of 1 with a ERC20Detailed token with 3 decimals called TOK, 1 wei will give you 1 unit, or 0.001 TOK.",
 					"params": {
-						"rate": "Number of token units a buyer gets per wei",
-						"token": "Address of the token being sold",
-						"wallet": "Address where collected funds will be forwarded to"
+						"r": "Number of token units a buyer gets per wei",
+						"t": "Address of the token being sold",
+						"w": "Address where collected funds will be forwarded to"
 					}
 				},
 				"rate()": {
@@ -338,10 +338,10 @@
 			]
 		},
 		"contracts/Crowdsale.sol": {
-			"keccak256": "0x68aac604b9c51cc0bdde2f8db91456d909e664884f84dfb695b3d1b2c2fcb37d",
+			"keccak256": "0xc2175891de1e8da6df928e34a98640518a004acb326f6da5876f03865096444c",
 			"urls": [
-				"bzz-raw://7b934de54aa132181bd6b08111ca7082bebca13dca834e5b09e99e489441d9a6",
-				"dweb:/ipfs/QmYFSuFtPC4Pj12nkTAodTHWbM1NcycpV2tSCXNUwvnzL8"
+				"bzz-raw://ff7ea23a39110080d3d949aafa8507a856a9685e985b4435caf893945798fe8d",
+				"dweb:/ipfs/QmR9ZHHuxHXUmaKpXFasCRu8oskefjDXEQVhijySV5Jr1D"
 			]
 		},
 		"contracts/VotingToken_OeoDao.sol": {
